@@ -10,9 +10,9 @@ target-version = ['py311']
 python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
-ignore_missing_imports = true # Importante para bibliotecas sem tipos
+ignore_missing_imports = true 
 
 # Configuração do Flake8 (Linter)
 [tool.flake8]
 max-line-length = 88
-extend-ignore = "E203" # Ignora um erro que entra em conflito com o Black
+extend-ignore = "E203"
