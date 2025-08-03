@@ -53,12 +53,13 @@ jobs:
       - name: Rodar Flake8 (Linting)
         run: |
           echo "🔍 Rodando Flake8 para verificação de estilo e erros..."
-          flake8 src/ tests/ --output-file=flake8-report.txt || exit 1
+          flake8 src/ tests/ > flake8-report.txt 2>&1 || exit 1
 
       - name: Rodar Mypy (Checagem de Tipos)
         run: |
           echo "🧐 Rodando Mypy para checagem de tipos..."
-          mypy src/ --show-error-codes --strict --config-file mypy.ini > mypy-report.txt || exit 1
+          mypy src/ --show-error-codes --strict --config-file mypy.ini > mypy-report.txt 2>&1 || exit 1
+
 
       - name: Mostrar resultados no log
         run: |
