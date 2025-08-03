@@ -2,9 +2,21 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
+      - sprint/*
+      - feature/*
+      - hotfix/*
+      - bugfix/*
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
+      - sprint/*
+      - feature/*
+      - hotfix/*
+      - bugfix/*
 
 jobs:
   docker-build:
@@ -58,7 +70,7 @@ jobs:
       - name: Rodar Mypy (Verificação de tipos)
         run: |
           echo "🔍 Rodando Mypy para verificação de tipos..."
-          mypy src/ --show-error-codes --strict > mypy-report.txt 2>&1 || exit 1
+          mypy --config-file mypy.ini src/ --show-error-codes --strict > mypy-report.txt 2>&1 || exit 1
 
       - name: Upload dos relatórios de lint
         if: always()
