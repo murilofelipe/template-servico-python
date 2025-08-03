@@ -34,7 +34,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    needs: docker-build  # opcional, pode remover se quiser rodar paralelo
+
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -55,20 +55,13 @@ jobs:
           echo "🔍 Rodando Flake8 para verificação de estilo e erros..."
           flake8 src/ tests/ > flake8-report.txt 2>&1 || exit 1
 
-      - name: Rodar Mypy (Checagem de Tipos)
+      - name: Rodar Mypy (Verificação de tipos)
         run: |
-          echo "🧐 Rodando Mypy para checagem de tipos..."
-          mypy src/ --show-error-codes --strict --config-file mypy.ini > mypy-report.txt 2>&1 || exit 1
+          echo "🔍 Rodando Mypy para verificação de tipos..."
+          mypy src/ --show-error-codes --strict > mypy-report.txt 2>&1 || exit 1
 
-
-      - name: Mostrar resultados no log
-        run: |
-          echo "=== Flake8 Report ==="
-          cat flake8-report.txt
-          echo "=== Mypy Report ==="
-          cat mypy-report.txt
-
-      - name: Upload reports como artefatos
+      - name: Upload dos relatórios de lint
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lint-reports
