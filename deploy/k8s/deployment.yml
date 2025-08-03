@@ -1,0 +1,56 @@
+# deploy/k8s/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template-python-service-deployment
+spec:
+  # Quantas instâncias da nossa aplicação devem estar sempre rodando.
+  replicas: 3
+  selector:
+    # Este seletor ajuda o Deployment a encontrar quais Pods ele gerencia.
+    # Deve ser o mesmo label definido no template do Pod abaixo.
+    matchLabels:
+      app: template-python-service
+  template:
+    metadata:
+      # Os labels aplicados a cada Pod criado.
+      labels:
+        app: template-python-service
+    spec:
+      containers:
+      - name: app-container
+        # IMPORTANTE: A imagem deve vir de um Container Registry (ex: Docker Hub, GHCR, AWS ECR).
+        # O valor aqui é um placeholder que seria substituído pelo pipeline de CI/CD.
+        image: seu-registry.com/seu-projeto/template-python-service:v1.2.3
+        ports:
+        - containerPort: 8080
+        
+        # Probes de Saúde: Como o Kubernetes verifica se a aplicação está funcionando.
+        livenessProbe:
+          # Se este teste falhar, o Kubernetes reinicia o contêiner.
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15 # Espera 15s antes do primeiro teste
+          periodSeconds: 20   # Testa a cada 20s
+        readinessProbe:
+          # Se este teste falhar, o Kubernetes para de enviar tráfego para este contêiner.
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        # Carrega todas as chaves do ConfigMap como variáveis de ambiente.
+        envFrom:
+        - configMapRef:
+            name: template-python-service-config
+        
+        # (Boa prática) Define limites de recursos para o contêiner.
+        resources:
+          requests:
+            cpu: "100m" # 0.1 de um core de CPU
+            memory: "128Mi" # 128 Megabytes de RAM
+          limits:
+            cpu: "500m" # 0.5 de um core de CPU
+            memory: "256Mi" # 256 Megabytes de RAM

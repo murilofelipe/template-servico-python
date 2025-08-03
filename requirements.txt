@@ -1,0 +1,13 @@
+# requirements.txt
+
+# Framework web para a criação da API
+Flask==2.2.2
+
+# Servidor WSGI de produção para rodar a aplicação
+gunicorn==20.1.0
+
+# Dependência do Flask, travada para garantir compatibilidade
+Werkzeug==2.3.7
+
+# Biblioteca para validação de dados (schemas)
+pydantic==1.10.12

@@ -1,0 +1,52 @@
+# docker-compose.yml
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/workspace:cached
+    environment:
+      - AMBIENTE=local-compose
+      - DATABASE_HOST=db
+      - DATABASE_USER=myuser
+      - DATABASE_PASSWORD=mypassword
+      - DATABASE_NAME=mydatabase
+    depends_on:
+      db:
+        condition: service_healthy
+    command: gunicorn --bind 0.0.0.0:8080 --reload "src.main:create_app()"
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  docs:
+    image: swaggerapi/swagger-ui
+    ports:
+      # Expõe a documentação na porta 8081 da sua máquina
+      - "8081:8080"
+    volumes:
+      # Mapeia nosso arquivo openapi.yml para dentro do contêiner
+      - ./docs/api/openapi.yml:/usr/share/nginx/html/openapi.yml
+    environment:
+      # Diz ao Swagger UI onde encontrar o arquivo da especificação
+      - SWAGGER_JSON=/openapi.yml
+
+volumes:
+  postgres_data:

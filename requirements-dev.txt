@@ -1,0 +1,13 @@
+# requirements-dev.txt
+
+# Framework de testes para rodar os testes unitários e de integração
+pytest
+
+# Formatador de código "opinativo" para manter um estilo consistente
+black
+
+# Linter para checar erros de estilo (PEP8) e bugs comuns
+flake8
+
+# Checador de tipos estático para encontrar erros de tipo antes da execução
+mypy

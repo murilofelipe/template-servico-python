@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: API do Template de Serviço Python
+  description: |-
+    Este é um template de serviço com uma API de exemplo para gerenciar usuários.
+    Fornece uma base sólida para a criação de novos microsserviços.
+  version: 1.0.0
+
+paths:
+  /health:
+    get:
+      summary: Verifica a saúde da aplicação
+      description: Retorna o status da aplicação para monitoramento e health checks.
+      responses:
+        '200':
+          description: A aplicação está saudável.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+
+  /users/:
+    get:
+      summary: Retorna uma lista de todos os usuários
+      description: Retorna uma lista com todos os usuários cadastrados no sistema.
+      responses:
+        '200':
+          description: Sucesso. Retorna a lista de usuários.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User' # Reutiliza o schema de User
+
+  /users/{userId}:
+    get:
+      summary: Busca um usuário por ID
+      description: Retorna os detalhes de um usuário específico.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: O ID do usuário a ser buscado.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Sucesso. Retorna o objeto do usuário.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuário não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    # Schema reutilizável para um objeto de Usuário
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: O identificador único do usuário.
+          example: 1
+        username:
+          type: string
+          description: O nome de usuário.
+          example: "murilo"
+        email:
+          type: string
+          format: email
+          description: O endereço de e-mail do usuário.
+          example: "murilo@example.com"
+          
+    # Schema reutilizável para mensagens de erro
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: A descrição do erro.
+          example: "User not found"

@@ -1,0 +1,14 @@
+# deploy/k8s/configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # O nome do ConfigMap, que será referenciado pelo Deployment.
+  name: template-python-service-config
+data:
+  # As chaves e valores aqui serão injetadas como variáveis de ambiente no contêiner.
+  # Em um ambiente real, informações sensíveis como senhas de banco de dados
+  # deveriam usar um objeto 'Secret' em vez de um 'ConfigMap'.
+  AMBIENTE: "producao"
+  DATABASE_HOST: "postgres.producao.svc.cluster.local" # Exemplo de endereço do DB no cluster
+  DATABASE_NAME: "producaodb"
+  DATABASE_USER: "userproducao"

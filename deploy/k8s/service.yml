@@ -1,0 +1,19 @@
+# deploy/k8s/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: template-python-service-svc
+spec:
+  # O tipo 'ClusterIP' expõe o serviço apenas na rede interna do cluster.
+  # É o padrão e o mais comum para comunicação entre microsserviços.
+  type: ClusterIP
+  selector:
+    # Este seletor deve ser o mesmo dos Pods para que o Service saiba
+    # para onde enviar o tráfego.
+    app: template-python-service
+  ports:
+    - protocol: TCP
+      # A porta que o Service expõe.
+      port: 80
+      # A porta nos contêineres para a qual o tráfego será direcionado.
+      targetPort: 8080
