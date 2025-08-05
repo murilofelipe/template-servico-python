@@ -92,12 +92,14 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            # Gatilho é uma tag de versão (ex: v1.2.3) -> gera a tag com a versão e a tag 'latest'
+            # Gera a tag com a versão e a tag 'latest' quando uma tag Git (ex: v1.2.3) é criada.
             type=semver,pattern={{version}}
-            type=raw,value=latest,enable={{is_default_branch}}
-            # Gatilho é um push na branch 'develop' -> gera a tag 'develop'
-            type=raw,value=develop,enable={{is_branch 'develop'}}
-            # Adiciona uma tag única com o hash do commit para rastreabilidade
+            type=raw,value=latest
+
+            # Gera a tag 'develop' apenas em pushes para a branch 'develop'.
+            type=ref,event=branch,name=develop
+
+            # Gera uma tag única com o hash do commit para todos os eventos.
             type=sha,prefix=,format=short
       - name: Build e Push da imagem Docker de PRODUÇÃO
         uses: docker/build-push-action@v5
