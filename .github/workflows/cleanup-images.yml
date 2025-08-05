@@ -23,7 +23,6 @@ jobs:
           
           # Especificado o tipo de conta e o usuário/dono.
           account-type: personal
-          user: ${{ github.repository_owner }}
 
           # Regra 2: (Segurança) Protege as tags mais importantes de serem excluídas,
           # não importa o quão antigas sejam.
