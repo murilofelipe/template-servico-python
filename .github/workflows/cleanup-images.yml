@@ -19,8 +19,12 @@ jobs:
           image-names: ${{ github.event.repository.name }}
           
           # Regra 1: Remove imagens "órfãs" (sem nenhuma tag) com mais de 7 dias.
-          cut-off: 7 days ago
+          cut-off: 7 days ago UTC
           
+          # Especificado o tipo de conta e o usuário/dono.
+          account-type: personal
+          user: ${{ github.repository_owner }}
+
           # Regra 2: (Segurança) Protege as tags mais importantes de serem excluídas,
           # não importa o quão antigas sejam.
           keep-tags: |
