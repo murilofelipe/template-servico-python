@@ -87,12 +87,17 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extrair metadados e tags do Docker
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=develop,enable={{is_branch 'develop'}}
+            # Gera a tag 'latest' apenas para a branch padrão (main)
+            type=raw,value=latest,event=push,branch=main
+
+            # Gera a tag 'develop' apenas para a branch 'develop'
+            type=raw,value=develop,event=push,branch=develop
+
+            # Gera uma tag única com o hash do commit para todos os eventos
             type=sha,prefix=,format=short
       - name: Build e Push da imagem Docker de PRODUÇÃO
         uses: docker/build-push-action@v4
