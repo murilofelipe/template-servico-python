@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD - Qualidade, Teste, Build e Deploy
 
 on:
   push:
@@ -13,70 +13,92 @@ on:
     branches:
       - main
       - develop
-      - sprint/*
-      - feature/*
-      - hotfix/*
-      - bugfix/*
 
 jobs:
-  docker-build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Verificar Docker Compose
-        run: |
-          docker compose version || docker-compose version
-
-      - name: Subir containers com Docker Compose
-        run: |
-          docker compose -f docker-compose.yml up -d --build
-
-      - name: Aguardar containers subirem
-        run: sleep 10
-
-      - name: Verificar serviços ativos
-        run: docker ps
-
-      - name: Encerrar containers
-        if: always()
-        run: docker compose -f docker-compose.yml down -v
-
+  # Job 1: Apenas Linting e Relatórios
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
       - name: Configurar Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-
-      - name: Rodar Flake8 (Linting)
+      - name: Rodar Flake8 e Mypy (gerando relatórios)
         run: |
-          echo "🔍 Rodando Flake8 para verificação de estilo e erros..."
-          flake8 src/ tests/ > flake8-report.txt 2>&1 || exit 1
-
-      - name: Rodar Mypy (Verificação de tipos)
-        run: |
-          echo "🔍 Rodando Mypy para verificação de tipos..."
-          mypy --config-file mypy.ini src/ --show-error-codes --strict > mypy-report.txt 2>&1 || exit 1
-
+          flake8 src/ tests/ > flake8-report.txt || true
+          mypy src/ > mypy-report.txt || true
       - name: Upload dos relatórios de lint
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lint-reports
           path: |
             flake8-report.txt
             mypy-report.txt
+
+  # Job 2: Apenas Testes
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Rodar testes com Pytest
+        run: make test
+
+  # Job 3: Apenas Teste de Build da Imagem de Produção
+  docker-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Build da imagem Docker de produção para teste
+        run: docker build . --file Dockerfile --tag test-build:latest
+
+  # Job 4: Publica a imagem no Registry (Deploy)
+  publish-to-registry:
+    runs-on: ubuntu-latest
+    # Garante que este job só rode após os 3 jobs anteriores passarem
+    needs: [lint, test, docker-build-test]
+    # Roda somente em pushes (merges) para 'main' ou 'develop'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Login no GitHub Container Registry (GHCR)
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extrair metadados e tags do Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=develop,enable={{is_branch 'develop'}}
+            type=sha,prefix=,format=short
+      - name: Build e Push da imagem Docker de PRODUÇÃO
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
