@@ -1,0 +1,40 @@
+name: Limpeza de Imagens Antigas do Registry
+
+on:
+  # Roda este workflow uma vez por semana, no domingo às 3h da manhã.
+  schedule:
+    - cron: '0 3 * * 0'
+  # Permite também acionar este workflow manualmente pela aba "Actions" do GitHub.
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Excluir imagens de contêiner antigas
+        uses: snok/container-retention-policy@v2
+        with:
+          # O nome do pacote de contêiner a ser limpo.
+          # Usamos uma variável para pegar o nome do repositório dinamicamente.
+          image-names: ${{ github.event.repository.name }}
+          
+          # Regra 1: Remove imagens "órfãs" (sem nenhuma tag) com mais de 7 dias.
+          cut-off: 7 days ago
+          
+          # Regra 2: (Segurança) Protege as tags mais importantes de serem excluídas,
+          # não importa o quão antigas sejam.
+          keep-tags: |
+            latest
+            develop
+
+          # Regra 3: (Segurança de Produção) Mantém as 2 ÚLTIMAS versões de produção
+          # que seguem o padrão de versionamento semântico (ex: v1.0.0, v1.1.0).
+          keep-semver-tagged-last: 2
+
+          # Regra 4: (Higiene de Homologação) Mantém as 5 últimas imagens que
+          # receberam a tag 'develop' e remove as mais antigas.
+          keep-tagged-last: 5
+          tag-match: develop
+          
+          # Token com permissão para ler e apagar pacotes do repositório.
+          token: ${{ secrets.GITHUB_TOKEN }}
