@@ -9,7 +9,7 @@ Este é o template padrão (Golden Path) para a criação de novos microsserviç
 ## O que está incluído?
 
 * **Ambiente de Desenvolvimento em Contêiner:** Configuração completa com VSCode Dev Containers para um setup com um clique.
-* **Linguagem:** Python 3.11
+* **Linguagem:** Python 3.11.
 * **Banco de Dados:** Contêiner Postgres pronto para uso.
 * **Framework Web:** Flask com organização por Blueprints.
 * **Servidor WSGI:** Gunicorn como servidor de produção robusto.
@@ -82,7 +82,48 @@ O `Makefile` é o painel de controle do projeto. Execute `make` ou `make help` p
 | `make clean`        | 🧹 Remove contêineres e volumes (útil para resetar tudo). |
 | `make install-dev`  | 📦 Instala dependências locais para rodar sem Docker (modo alternativo). |
 
-ℹ️ **Nota:** Dentro do Dev Container, os comandos `make up` e `make run-dev` geralmente não são necessários, pois o servidor e banco já estarão rodando automaticamente.
+ℹ️ **Nota:** Dentro do Dev Container, os comandos `make up` e `make run-dev` geralmente não são necessários, pois o servidor e banco de dados já estarão rodando automaticamente.
+
+## Fluxo de Trabalho (Gitflow)
+
+Este projeto utiliza um fluxo de trabalho baseado no Gitflow para garantir a organização e a qualidade do código. As branches principais são:
+
+* **`main`**: Reflete o código em **produção**. É uma branch estável e protegida. Nenhum push direto é permitido.
+* **`develop`**: Branch de integração que contém as features mais recentes prontas para o ambiente de **homologação (staging)**. É a base para todo novo desenvolvimento.
+* **`feature/*`**, **`bugfix/*`**, etc.: Todo trabalho novo deve ser feito em uma branch própria, criada a partir da `develop`.
+
+O ciclo de desenvolvimento é o seguinte:
+1.  Crie uma nova branch a partir da `develop` (ex: `feature/login-avancado`).
+2.  Faça seus commits de trabalho nesta branch.
+3.  Ao concluir, abra um **Pull Request** da sua branch para a `develop`.
+4.  O pipeline de CI/CD rodará os testes e as checagens de qualidade. A equipe fará a revisão do código (Code Review).
+5.  Após a aprovação e o sucesso do CI, o Pull Request é mesclado na `develop`, o que gera uma nova imagem para o ambiente de homologação.
+
+### Lançando uma Nova Versão para Produção (Processo Manual)
+
+Lançar uma nova versão para produção é um processo manual e deliberado, a ser executado pelo Gerente de Projeto ou Líder Técnico. Ele é acionado pela criação de uma **tag Git** na branch `main`.
+
+**Pré-requisito:** A branch `main` deve estar atualizada com o conteúdo da `develop` (geralmente via um Pull Request de `develop` para `main`).
+
+**Passos para o Lançamento (ex: versão v1.2.3):**
+
+1.  **Sincronize sua branch `main` local:**
+    ```bash
+    git checkout main
+    git pull origin main
+    ```
+
+2.  **Crie a tag de versão anotada:**
+    ```bash
+    # O -a cria uma tag anotada, e -m adiciona uma mensagem de release
+    git tag -a v1.2.3 -m "Release v1.2.3: Adiciona login social e corrige bug X."
+    ```
+
+3.  **Empurre a tag para o GitHub (Este é o gatilho!):**
+    ```bash
+    git push origin v1.2.3
+    ```
+    Ao receber esta nova tag, o GitHub Actions iniciará o pipeline de produção, que construirá a imagem final e a tagueará com `latest` e `v1.2.3`.
 
 ## Estrutura do Projeto
 

@@ -28,10 +28,10 @@ This is the standard Golden Path template for creating new Python microservices 
 3.  **Start the Environment:** A notification will appear in the bottom-right corner. Click on **"Reopen in Container"**. The first time, this will take a few minutes.
 
 4.  **Environment Ready:** At the end of the process, the environment will be 100% ready:
-    * The `app` and `db` containers will be running.
+    * The `app`, `db`, and `docs` containers will be running.
     * A terminal will appear executing `make run-dev`, with the web server already started.
 
-5.  **Start Developing!** The application is available at `http://localhost:8080`. Open a new terminal (`Ctrl+'`) to run other commands.
+5.  **Start Developing!** The application is available at `http://localhost:8080` and the API docs at `http://localhost:8081`. Open a new terminal (`Ctrl+'`) to run other commands.
 
 ## Makefile Commands
 
@@ -41,20 +41,65 @@ The `Makefile` is the project's control panel. Run `make` or `make help` to see 
 
 | Command      | Description                                                                              |
 | :----------- | :--------------------------------------------------------------------------------------- |
-| `make run-dev` | ▶️ Starts the web server with hot-reload. Ideal for day-to-day development.             |
 | `make test`    | 🧪 Runs the full test suite with `pytest`.                                               |
 | `make lint`    | 🔍 Runs code quality checks (Flake8 and Mypy) to find errors and style issues.         |
 | `make format`  | 🎨 Formats all code automatically with `Black` to ensure a consistent style.               |
+| `make run-dev` | ▶️ Starts the web server manually with hot-reload (optional in the Dev Container).     |
 
-### Environment Management Commands (to be used OUTSIDE the Dev Container, on your local terminal)
 
-| Command      | Description                                                                                 |
-| :----------- | :------------------------------------------------------------------------------------------ |
-| `make up`      | 🚀 Brings up the entire environment (app and db) in the background.                           |
-| `make down`    | ⛔ Stops and removes all containers from the environment.                                     |
-| `make logs`    | 📜 Shows the real-time logs from all containers.                                              |
-| `make restart` | 🔄 Restarts the entire environment (equivalent to `make down` then `make up`).                |
-| `make clean`   | 🧹 Stops the environment and removes persistent data (database volumes). Use with caution. |
+### Environment Management Commands (to be used OUTSIDE the Dev Container)
+
+| Command             | Description                                                                                 |
+| :------------------ | :------------------------------------------------------------------------------------------ |
+| `make up`           | 🚀 Brings up the entire environment (app and db) in the background.                           |
+| `make down`         | ⛔ Stops and removes all containers from the environment.                                     |
+| `make logs`         | 📜 Shows the real-time logs from all containers.                                              |
+| `make restart`      | 🔄 Restarts the entire environment (equivalent to `make down` then `make up`).                |
+| `make clean`        | 🧹 Stops the environment and removes persistent data (database volumes). Use with caution. |
+| `make install-dev`  | 📦 Installs local dependencies to run without Docker (alternative mode).                    |
+
+ℹ️ **Note:** Inside the Dev Container, the `make up` and `make run-dev` commands are generally not needed, as the server and database will already be running automatically.
+
+## Workflow (Gitflow)
+
+This project uses a workflow based on Gitflow to ensure code organization and quality. The main branches are:
+
+* **`main`**: Reflects the code in **production**. It is a stable and protected branch. No direct pushes are allowed.
+* **`develop`**: The integration branch that contains the latest features ready for the **staging** environment. It serves as the base for all new development.
+* **`feature/*`**, **`bugfix/*`**, etc.: All new work must be done in its own branch, created from `develop`.
+
+The development cycle is as follows:
+1.  Create a new branch from `develop` (e.g., `feature/advanced-login`).
+2.  Make your work commits on this branch.
+3.  When finished, open a **Pull Request** from your branch to `develop`.
+4.  The CI/CD pipeline will run tests and quality checks. The team will perform a Code Review.
+5.  After approval and a successful CI run, the Pull Request is merged into `develop`, which triggers a new image build for the staging environment.
+
+### Releasing a New Version to Production (Manual Process)
+
+Releasing a new version to production is a deliberate, manual process to be executed by the Project Manager or Tech Lead. It is triggered by creating a **Git tag** on the `main` branch.
+
+**Prerequisite:** The `main` branch must be up-to-date with the content from `develop` (usually via a Pull Request from `develop` to `main`).
+
+**Steps for Release (e.g., version v1.2.3):**
+
+1.  **Sync your local `main` branch:**
+    ```bash
+    git checkout main
+    git pull origin main
+    ```
+
+2.  **Create an annotated version tag:**
+    ```bash
+    # The -a creates an annotated tag, and -m adds a release message
+    git tag -a v1.2.3 -m "Release v1.2.3: Adds social login and fixes bug X."
+    ```
+
+3.  **Push the tag to GitHub (This is the trigger!):**
+    ```bash
+    git push origin v1.2.3
+    ```
+    Upon receiving this new tag, GitHub Actions will initiate the production pipeline, which will build the final image and tag it with `latest` and `v1.2.3`.
 
 ## Project Structure
 
