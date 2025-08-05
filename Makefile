@@ -54,7 +54,7 @@ lint:
 	@echo "🔍 Verificando estilo do código com Flake8..."
 	flake8 src/ tests/
 	@echo "🧐 Verificando tipos com Mypy..."
-	mypy src/
+	mypy --config-file mypy.ini src/
 	@echo "✅ Checagens de qualidade concluídas!"
 
 # Formata todo o código automaticamente com Black.

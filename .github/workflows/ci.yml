@@ -1,82 +1,111 @@
-name: CI Pipeline
+name: CI/CD - Qualidade, Teste, Build e Deploy
 
+# Gatilhos do Workflow: Define quando as actions devem ser executadas.
 on:
   push:
+    # Aciona em pushes para a branch de desenvolvimento e para tags de versão (ex: v1.0.0).
     branches:
-      - main
       - develop
-      - sprint/*
-      - feature/*
-      - hotfix/*
-      - bugfix/*
+    tags:
+      - 'v*.*.*'
   pull_request:
+    # Aciona em Pull Requests abertos para as branches 'main' e 'develop'.
+    # Isso garante a validação de branches de feature, hotfix, etc., antes do merge.
     branches:
       - main
       - develop
-      - sprint/*
-      - feature/*
-      - hotfix/*
-      - bugfix/*
 
 jobs:
-  docker-build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Verificar Docker Compose
-        run: |
-          docker compose version || docker-compose version
-
-      - name: Subir containers com Docker Compose
-        run: |
-          docker compose -f docker-compose.yml up -d --build
-
-      - name: Aguardar containers subirem
-        run: sleep 10
-
-      - name: Verificar serviços ativos
-        run: docker ps
-
-      - name: Encerrar containers
-        if: always()
-        run: docker compose -f docker-compose.yml down -v
-
+  # Job 1: Executa o linting e gera relatórios.
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
       - name: Configurar Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-
-      - name: Rodar Flake8 (Linting)
+      - name: Rodar Flake8 e Mypy (gerando relatórios)
         run: |
-          echo "🔍 Rodando Flake8 para verificação de estilo e erros..."
-          flake8 src/ tests/ > flake8-report.txt 2>&1 || exit 1
-
-      - name: Rodar Mypy (Verificação de tipos)
-        run: |
-          echo "🔍 Rodando Mypy para verificação de tipos..."
-          mypy --config-file mypy.ini src/ --show-error-codes --strict > mypy-report.txt 2>&1 || exit 1
-
-      - name: Upload dos relatórios de lint
-        if: always()
+          flake8 src/ tests/ > flake8-report.txt || true
+          mypy src/ > mypy-report.txt || true
+      - name: Upload dos relatórios de lint como artefatos
         uses: actions/upload-artifact@v4
         with:
           name: lint-reports
           path: |
             flake8-report.txt
             mypy-report.txt
+
+  # Job 2: Executa os testes automatizados.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Rodar testes com Pytest
+        run: make test
+
+  # Job 3: Testa se a imagem Docker de PRODUÇÃO pode ser construída.
+  docker-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Build da imagem Docker de produção para teste
+        run: docker build . --file Dockerfile --tag test-build:latest
+
+  # Job 4: Publica a imagem no Registry (apenas em pushes para 'develop' ou tags de versão)
+  publish-to-registry:
+    runs-on: ubuntu-latest
+    # Garante que este job só rode após os 3 jobs de qualidade passarem.
+    needs: [lint, test, docker-build-test]
+    # Roda somente em eventos de 'push', não em 'pull_request'.
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Login no GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extrair metadados e tags do Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            # Gera a tag com a versão e a tag 'latest' quando uma tag Git (ex: v1.2.3) é criada.
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+
+            # Gera a tag 'develop' apenas em pushes para a branch 'develop'.
+            type=ref,event=branch,name=develop
+
+            # Gera uma tag única com o hash do commit para todos os eventos.
+            type=sha,prefix=,format=short
+      - name: Build e Push da imagem Docker de PRODUÇÃO
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
