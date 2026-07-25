@@ -11,3 +11,9 @@ flake8
 
 # Checador de tipos estático para encontrar erros de tipo antes da execução
 mypy
+# Coverage
+pytest-cov
+
+# Code duplication checker
+pylint
+
