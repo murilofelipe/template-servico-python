@@ -19,3 +19,6 @@ pydantic-settings==2.2.1
 Flask-SQLAlchemy==3.1.1
 Flask-Migrate==4.0.7
 psycopg2-binary==2.9.9
+
+# Documentação OpenAPI e Swagger UI
+flask-swagger-ui==4.11.1

@@ -38,17 +38,5 @@ services:
       timeout: 5s
       retries: 5
 
-  docs:
-    image: swaggerapi/swagger-ui
-    ports:
-      # Expõe a documentação na porta 8081 da sua máquina
-      - "8081:8080"
-    volumes:
-      # Mapeia nosso arquivo openapi.yml para dentro do contêiner
-      - ./docs/api/openapi.yml:/usr/share/nginx/html/openapi.yml
-    environment:
-      # Diz ao Swagger UI onde encontrar o arquivo da especificação
-      - SWAGGER_JSON=/openapi.yml
-
 volumes:
   postgres_data:

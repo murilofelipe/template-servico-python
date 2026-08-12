@@ -1,7 +1,9 @@
 # src/main.py
-from flask import Flask
+from flask import Flask, jsonify
+from flask_swagger_ui import get_swaggerui_blueprint
 
 from core.config import settings
+from core.openapi import get_openapi_spec
 from database import db, migrate
 from healthcheck.health_routes import health_bp
 from users.user_models import UserModel  # noqa: F401
@@ -29,6 +31,20 @@ def create_app() -> Flask:
     app.register_blueprint(health_bp)
     app.register_blueprint(user_bp)
 
+    # Configuração e registro do Swagger UI
+    SWAGGER_URL = "/docs"
+    API_URL = "/openapi.json"
+    swaggerui_bp = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={"app_name": "template-servico-python"},
+    )
+    app.register_blueprint(swaggerui_bp, url_prefix=SWAGGER_URL)
+
+    @app.route("/openapi.json")
+    def openapi_spec():
+        return jsonify(get_openapi_spec())
+
     @app.route("/")
     def index():
         return (
@@ -36,3 +52,4 @@ def create_app() -> Flask:
         )
 
     return app
+
