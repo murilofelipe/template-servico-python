@@ -11,3 +11,6 @@ Werkzeug==3.0.3
 
 # Biblioteca para validação de dados (schemas)
 pydantic==2.7.1
+
+# Gerenciamento de configurações centralizadas via Pydantic v2
+pydantic-settings==2.2.1

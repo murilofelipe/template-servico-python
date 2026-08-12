@@ -1,15 +1,21 @@
 # src/main.py
 from flask import Flask
 
+from core.config import settings
 from healthcheck.health_routes import health_bp
-
-# Importa os blueprints das features
 from users.user_routes import user_bp
 
 
-def create_app():
+def create_app() -> Flask:
     """Cria e configura a instância da aplicação Flask."""
     app = Flask(__name__)
+
+    # Carrega configurações centralizadas no Flask app.config
+    app.config["ENVIRONMENT"] = settings.ENVIRONMENT
+    app.config["DEBUG"] = settings.DEBUG
+    app.config["PORT"] = settings.PORT
+    app.config["DATABASE_URL"] = settings.DATABASE_URL
+    app.config["APP_NAME"] = settings.APP_NAME
 
     # Registra os blueprints na aplicação
     app.register_blueprint(health_bp)
@@ -22,3 +28,4 @@ def create_app():
         )
 
     return app
+
