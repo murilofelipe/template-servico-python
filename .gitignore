@@ -27,6 +27,10 @@ ENV/
 # Ignora tudo na pasta .vscode por padrão
 .vscode/
 
+# Mutmut
+mutants/
+.mutmut-cache
+
 # JetBrains (PyCharm, etc.)
 .idea/
 

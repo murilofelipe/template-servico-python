@@ -31,16 +31,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-      - name: Rodar Flake8 e Mypy (gerando relatórios)
+      - name: Rodar Ruff e Mypy (gerando relatórios)
         run: |
-          flake8 src/ tests/ > flake8-report.txt || true
+          ruff check src/ tests/ > ruff-report.txt || true
           mypy src/ > mypy-report.txt || true
       - name: Upload dos relatórios de lint como artefatos
         uses: actions/upload-artifact@v4
         with:
           name: lint-reports
           path: |
-            flake8-report.txt
+            ruff-report.txt
             mypy-report.txt
 
   # Job 2: Executa os testes automatizados.
@@ -60,6 +60,8 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Rodar testes com Pytest
         run: make test
+      - name: Rodar testes de mutação
+        run: bash scripts/run_mutation_tests.sh
 
   # Job 3: Testa se a imagem Docker de PRODUÇÃO pode ser construída.
   docker-build-test:

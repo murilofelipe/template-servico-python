@@ -1,0 +1,42 @@
+name: Code Quality and Metrics
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+        cache: "pip"
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        
+    - name: Check code formatting (Ruff)
+      run: ruff format --check src/ tests/
+      
+    - name: Check linting (Ruff)
+      run: ruff check src/ tests/
+      
+    - name: Check type hints (Mypy)
+      run: mypy --config-file mypy.ini src/
+      
+    - name: Check code duplications (Pylint)
+      run: pylint --disable=all --enable=duplicate-code src/
+      
+    - name: Run tests with coverage
+      run: pytest tests/ --cov=src --cov-report=xml --cov-report=term

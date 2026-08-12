@@ -1,9 +1,10 @@
 # src/main.py
 from flask import Flask
 
+from healthcheck.health_routes import health_bp
+
 # Importa os blueprints das features
-from .users.user_routes import user_bp
-from .healthcheck.health_routes import health_bp
+from users.user_routes import user_bp
 
 
 def create_app():

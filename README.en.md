@@ -214,3 +214,17 @@ You can connect to the Postgres database running in the `db` container using you
 1.  Navigate to the main page of this repository on GitHub.
 2.  Click the green **"Use this template"** button and select "Create a new repository".
 3.  Name your new microservice and follow the "Getting Started" guide above.
+
+## 🧪 Mandatory Tests
+
+This template enforces code quality through rigorous testing checks. For any service built from this template, the use of the following is **mandatory**:
+- **Unit Tests**
+- **Integration Tests**
+- **Mutation Tests** (`mutmut`)
+
+The checks run automatically in GitHub Actions. If the mutation testing coverage is not 100% (i.e., if there are surviving mutants), the pipeline will fail.
+
+You can validate your tests locally using the offline script:
+```bash
+bash scripts/run_mutation_tests.sh
+```

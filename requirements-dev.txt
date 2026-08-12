@@ -3,11 +3,16 @@
 # Framework de testes para rodar os testes unitários e de integração
 pytest
 
-# Formatador de código "opinativo" para manter um estilo consistente
-black
-
-# Linter para checar erros de estilo (PEP8) e bugs comuns
-flake8
+# Linter e formatador de código rápido para Python (substitui Black e Flake8)
+ruff
 
 # Checador de tipos estático para encontrar erros de tipo antes da execução
 mypy
+# Coverage
+pytest-cov
+
+# Code duplication checker
+pylint
+
+# Teste de mutação
+mutmut

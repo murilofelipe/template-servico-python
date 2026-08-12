@@ -43,24 +43,25 @@ clean:
 
 # Roda o servidor de desenvolvimento com hot-reload.
 run-dev:
-	gunicorn --bind 0.0.0.0:8080 --reload "src.main:create_app()"
+	PYTHONPATH=src gunicorn --bind 0.0.0.0:8080 --reload "main:create_app()"
 
 # Roda todos os testes automatizados usando pytest.
 test:
-	pytest -v
+	@echo "🧪 Executando os testes automatizados..."
+	pytest tests/ -v
 
 # Roda as ferramentas de qualidade de código (linting e checagem de tipos).
 lint:
-	@echo "🔍 Verificando estilo do código com Flake8..."
-	flake8 src/ tests/
+	@echo "🔍 Verificando estilo do código com Ruff..."
+	ruff check src/ tests/
 	@echo "🧐 Verificando tipos com Mypy..."
 	mypy --config-file mypy.ini src/
 	@echo "✅ Checagens de qualidade concluídas!"
 
-# Formata todo o código automaticamente com Black.
+# Formata todo o código automaticamente com Ruff.
 format:
-	@echo "🎨 Formatando o código com Black..."
-	black src/ tests/
+	@echo "🎨 Formatando o código com Ruff..."
+	ruff format src/ tests/
 
 
 # ====================================================================================
@@ -93,8 +94,8 @@ help:
 	@echo "🧩 Comandos de Desenvolvimento (dentro do Dev Container):"
 	@echo "--------------------------------------------------------"
 	@echo "  make test         🧪 Executa todos os testes automatizados com pytest."
-	@echo "  make lint         🔍 Roda checagens de qualidade de código com Flake8 e Mypy."
-	@echo "  make format       🎨 Formata o código com Black."
+	@echo "  make lint         🔍 Roda checagens de qualidade de código com Ruff e Mypy."
+	@echo "  make format       🎨 Formata o código com Ruff."
 	@echo "  make run-dev      ▶️ Inicia o servidor manualmente com hot reload (opcional no Dev Container)."
 	@echo ""
 	@echo "ℹ️  Observação: No DevContainer, o servidor já está ativo via Docker Compose (porta 8080)."
