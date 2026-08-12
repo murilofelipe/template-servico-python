@@ -26,11 +26,11 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
         
-    - name: Check code formatting (Black)
-      run: black --check src/ tests/
+    - name: Check code formatting (Ruff)
+      run: ruff format --check src/ tests/
       
-    - name: Check linting (Flake8)
-      run: flake8 src/ tests/
+    - name: Check linting (Ruff)
+      run: ruff check src/ tests/
       
     - name: Check type hints (Mypy)
       run: mypy --config-file mypy.ini src/
@@ -39,4 +39,4 @@ jobs:
       run: pylint --disable=all --enable=duplicate-code src/
       
     - name: Run tests with coverage
-      run: pytest --cov=src --cov-report=xml --cov-report=term
+      run: pytest tests/ --cov=src --cov-report=xml --cov-report=term
