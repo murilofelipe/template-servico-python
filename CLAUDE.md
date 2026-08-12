@@ -22,6 +22,7 @@ regras — comece por ele. Quem alterar arquitetura deve atualizar o snapshot.
 - Qualidade de codigo: Black, Flake8 e Mypy (para unificar em Ruff no futuro).
 - Testes automatizados com `pytest` (unitarios e integracao).
 - Dev Containers para configuracao rapida do ambiente.
+- Fluxo Gitflow estrito: `develop` para integração, `main` para produção, e uso de tags para releases (ver `AGENTS.md`).
 
 ## Ao final de uma sessao que mudou arquitetura ou aprendizado
 
