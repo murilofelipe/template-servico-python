@@ -1,8 +1,10 @@
 # src/users/user_schemas.py
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class User(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     username: str
     email: str

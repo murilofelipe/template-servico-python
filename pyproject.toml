@@ -1,6 +1,10 @@
 # pyproject.toml
 
-# Configuração do Black (Formatador)
-[tool.black]
+# Configuração do Ruff (Linter & Formatador)
+[tool.ruff]
 line-length = 88
-target-version = ['py311']
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
