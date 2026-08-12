@@ -21,4 +21,3 @@ def test_health_route_db_failure(test_client, monkeypatch):
         "status": "unhealthy",
         "database": "disconnected",
     }
-

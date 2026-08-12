@@ -24,9 +24,7 @@ def get_openapi_spec() -> Dict[str, Any]:
                     "responses": {
                         "200": {
                             "description": "Successful response",
-                            "content": {
-                                "text/html": {"schema": {"type": "string"}}
-                            },
+                            "content": {"text/html": {"schema": {"type": "string"}}},
                         }
                     },
                 }
@@ -34,7 +32,9 @@ def get_openapi_spec() -> Dict[str, Any]:
             "/health": {
                 "get": {
                     "summary": "Health Check",
-                    "description": "Validates application status and database connectivity.",
+                    "description": (
+                        "Validates application status and database connectivity."
+                    ),
                     "responses": {
                         "200": {
                             "description": "Application and database are healthy",
@@ -58,7 +58,9 @@ def get_openapi_spec() -> Dict[str, Any]:
                             },
                         },
                         "503": {
-                            "description": "Database connection failure or service unhealthy",
+                            "description": (
+                                "Database connection failure or service unhealthy"
+                            ),
                             "content": {
                                 "application/json": {
                                     "schema": {
@@ -92,9 +94,7 @@ def get_openapi_spec() -> Dict[str, Any]:
                                 "application/json": {
                                     "schema": {
                                         "type": "array",
-                                        "items": {
-                                            "$ref": "#/components/schemas/User"
-                                        },
+                                        "items": {"$ref": "#/components/schemas/User"},
                                     }
                                 }
                             },
@@ -108,9 +108,7 @@ def get_openapi_spec() -> Dict[str, Any]:
                         "required": True,
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserInput"
-                                }
+                                "schema": {"$ref": "#/components/schemas/UserInput"}
                             }
                         },
                     },
@@ -119,9 +117,7 @@ def get_openapi_spec() -> Dict[str, Any]:
                             "description": "User successfully created",
                             "content": {
                                 "application/json": {
-                                    "schema": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
+                                    "schema": {"$ref": "#/components/schemas/User"}
                                 }
                             },
                         },
@@ -131,9 +127,7 @@ def get_openapi_spec() -> Dict[str, Any]:
                                 "application/json": {
                                     "schema": {
                                         "type": "object",
-                                        "properties": {
-                                            "error": {"type": "string"}
-                                        },
+                                        "properties": {"error": {"type": "string"}},
                                     }
                                 }
                             },
@@ -159,9 +153,7 @@ def get_openapi_spec() -> Dict[str, Any]:
                             "description": "User found",
                             "content": {
                                 "application/json": {
-                                    "schema": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
+                                    "schema": {"$ref": "#/components/schemas/User"}
                                 }
                             },
                         },

@@ -14,4 +14,3 @@ def health():
         return jsonify({"status": "ok", "database": "connected"}), 200
     except Exception:
         return jsonify({"status": "unhealthy", "database": "disconnected"}), 503
-
