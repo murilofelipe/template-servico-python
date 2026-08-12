@@ -43,7 +43,7 @@ clean:
 
 # Roda o servidor de desenvolvimento com hot-reload.
 run-dev:
-	gunicorn --bind 0.0.0.0:8080 --reload "src.main:create_app()"
+	PYTHONPATH=src gunicorn --bind 0.0.0.0:8080 --reload "main:create_app()"
 
 # Roda todos os testes automatizados usando pytest.
 test:

@@ -17,5 +17,8 @@
     
     COPY src/ src/
     ENV AMBIENTE=producao
+    ENV PYTHONPATH=/app/src
     EXPOSE 8080
-    CMD ["gunicorn", "--bind", "0.0.0.0:8080", "src.main:create_app()"]
+    
+    # Comando para rodar a aplicação em produção usando Gunicorn
+    CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:create_app()"]

@@ -222,3 +222,17 @@ Para modernizar as tecnologias deste template e torná-lo ainda mais completo pa
 * **Épico 1: Modernização da Stack de Desenvolvimento e Qualidade** (Unificação do linter/formatador com Ruff, upgrade do Flask para 3.x e Pydantic para v2).
 * **Épico 2: Integração de Banco de Dados Real no Template** (Substituição do mock na rota de usuários por integração com PostgreSQL usando SQLAlchemy e migrações Flask-Migrate).
 * **Épico 3: Documentação de API Dinâmica e Configurações** (Geração automática de documentação Swagger com APIFlask/Flask-Smorest, configurações via Pydantic Settings e Health Check estendido).
+
+## 🧪 Testes Obrigatórios
+
+Este template enforceia a qualidade do código através de rigorosas verificações de testes. Para qualquer serviço construído a partir deste template, é **obrigatório** o uso de:
+- **Testes Unitários**
+- **Testes de Integração**
+- **Testes de Mutação** (`mutmut`)
+
+As verificações rodam automaticamente no GitHub Actions. Se a cobertura dos testes de mutação não for de 100% (ou seja, se houver mutantes sobreviventes), a pipeline irá falhar.
+
+Você pode validar seus testes localmente utilizando o script offline:
+```bash
+bash scripts/run_mutation_tests.sh
+```

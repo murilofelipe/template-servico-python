@@ -17,3 +17,5 @@ pytest-cov
 # Code duplication checker
 pylint
 
+# Teste de mutação
+mutmut
