@@ -18,7 +18,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: gunicorn --bind 0.0.0.0:8080 --reload "src.main:create_app()"
+    environment:
+      - PYTHONPATH=src
+    command: gunicorn --bind 0.0.0.0:8080 --reload "main:create_app()"
 
   db:
     image: postgres:15-alpine

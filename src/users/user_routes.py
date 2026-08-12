@@ -1,6 +1,6 @@
 # src/users/user_routes.py
 from flask import Blueprint, jsonify
-from . import user_controller
+from users import user_controller
 
 # Um Blueprint é uma forma de organizar um grupo de rotas relacionadas
 user_bp = Blueprint("user_bp", __name__, url_prefix="/users")

@@ -1,6 +1,6 @@
 # src/users/user_controller.py
 from typing import List
-from .user_schemas import User
+from users.user_schemas import User
 
 # Dados de exemplo. Em um projeto real, isso viria de um banco de dados.
 fake_db: List[User] = [

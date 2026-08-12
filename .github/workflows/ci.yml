@@ -60,6 +60,8 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Rodar testes com Pytest
         run: make test
+      - name: Rodar testes de mutação
+        run: bash scripts/run_mutation_tests.sh
 
   # Job 3: Testa se a imagem Docker de PRODUÇÃO pode ser construída.
   docker-build-test:

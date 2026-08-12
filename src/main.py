@@ -2,8 +2,8 @@
 from flask import Flask
 
 # Importa os blueprints das features
-from .users.user_routes import user_bp
-from .healthcheck.health_routes import health_bp
+from users.user_routes import user_bp
+from healthcheck.health_routes import health_bp
 
 
 def create_app():
