@@ -14,3 +14,8 @@ pydantic==2.7.1
 
 # Gerenciamento de configurações centralizadas via Pydantic v2
 pydantic-settings==2.2.1
+
+# ORM e Gerenciamento de Banco de Dados
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.7
+psycopg2-binary==2.9.9

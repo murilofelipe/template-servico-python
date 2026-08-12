@@ -1,25 +1,19 @@
 # src/users/user_controller.py
-from typing import List
+from typing import List, Optional
 
-from users.user_schemas import User
-
-# Dados de exemplo. Em um projeto real, isso viria de um banco de dados.
-fake_db: List[User] = [
-    User(id=1, username="murilo", email="murilo@example.com"),
-    User(id=2, username="gemini", email="gemini@example.com"),
-]
+from database import db
+from users.user_models import UserModel
+from users.user_schemas import User, UserInput
 
 
 def get_all_users() -> List[User]:
-    """Retorna todos os usuários."""
-    return fake_db
+    """Retorna todos os usuários cadastrados no banco de dados."""
+    users = UserModel.query.all()
+    return [User.model_validate(u) for u in users]
 
 
-def get_user_by_id(user_id: int) -> User | None:
-    """Busca um usuário específico pelo seu ID.
-
-    Esta função itera sobre a lista de usuários em memória para encontrar
-    uma correspondência com o ID fornecido.
+def get_user_by_id(user_id: int) -> Optional[User]:
+    """Busca um usuário específico pelo seu ID no banco de dados.
 
     Args:
         user_id: O ID numérico do usuário a ser encontrado.
@@ -27,7 +21,25 @@ def get_user_by_id(user_id: int) -> User | None:
     Returns:
         Um objeto User se o usuário for encontrado, caso contrário, None.
     """
-    for user in fake_db:
-        if user.id == user_id:
-            return user
+    user = UserModel.query.get(user_id)
+    if user:
+        return User.model_validate(user)
     return None
+
+
+def create_user(user_input: UserInput) -> User:
+    """Cria e persiste um novo usuário no banco de dados.
+
+    Args:
+        user_input: Dados para criação do usuário.
+
+    Returns:
+        Um objeto User representando o usuário criado.
+    """
+    user_model = UserModel(
+        username=user_input.username,
+        email=user_input.email,
+    )
+    db.session.add(user_model)
+    db.session.commit()
+    return User.model_validate(user_model)

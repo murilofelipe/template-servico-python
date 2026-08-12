@@ -1,7 +1,9 @@
 # src/users/user_routes.py
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from pydantic import ValidationError
 
 from users import user_controller
+from users.user_schemas import UserInput
 
 # Um Blueprint é uma forma de organizar um grupo de rotas relacionadas
 user_bp = Blueprint("user_bp", __name__, url_prefix="/users")
@@ -20,3 +22,16 @@ def get_user_by_id_route(user_id: int):
     if user:
         return jsonify(user.model_dump())
     return jsonify({"error": "User not found"}), 404
+
+
+@user_bp.route("/", methods=["POST"])
+def create_user_route():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Invalid or missing JSON payload"}), 400
+    try:
+        user_input = UserInput(**data)
+    except (ValidationError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    user = user_controller.create_user(user_input)
+    return jsonify(user.model_dump()), 201
