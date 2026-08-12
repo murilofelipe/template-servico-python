@@ -47,7 +47,8 @@ run-dev:
 
 # Roda todos os testes automatizados usando pytest.
 test:
-	pytest -v
+	@echo "🧪 Executando os testes automatizados..."
+	pytest tests/ -v
 
 # Roda as ferramentas de qualidade de código (linting e checagem de tipos).
 lint:
