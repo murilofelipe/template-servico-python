@@ -12,6 +12,7 @@ regras — comece por ele. Quem alterar arquitetura deve atualizar o snapshot.
 1. `.junie/PROJECT_CONTEXT.md` — stack, convencoes, status atual
 2. `.junie/LEARNINGS.md` — erros recorrentes e regras aprendidas
 3. `BACKLOG.md` — backlog e sprints planejados
+4. `AGENTS.md` — regras e contexto genérico para múltiplos agentes
 
 ## Regras deste projeto
 
