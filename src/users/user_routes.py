@@ -1,6 +1,7 @@
 # src/users/user_routes.py
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
+from sqlalchemy.exc import IntegrityError
 
 from users import user_controller
 from users.user_schemas import UserInput
@@ -33,5 +34,8 @@ def create_user_route():
         user_input = UserInput(**data)
     except (ValidationError, TypeError) as e:
         return jsonify({"error": str(e)}), 400
-    user = user_controller.create_user(user_input)
+    try:
+        user = user_controller.create_user(user_input)
+    except IntegrityError:
+        return jsonify({"error": "Username or email already exists"}), 400
     return jsonify(user.model_dump()), 201

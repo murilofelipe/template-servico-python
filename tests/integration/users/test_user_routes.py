@@ -36,3 +36,21 @@ def test_create_user_route_invalid_payload(test_client):
     payload = {"username": "ab", "email": "email_invalido"}
     response = test_client.post("/users/", json=payload)
     assert response.status_code == 400
+
+
+def test_create_user_route_duplicate_username(test_client):
+    """Garante que POST /users/ retorna 400 ao tentar cadastrar username duplicado."""
+    payload = {"username": "murilo", "email": "novo_email@example.com"}
+    response = test_client.post("/users/", json=payload)
+    assert response.status_code in (400, 409)
+    data = response.get_json()
+    assert "error" in data
+
+
+def test_create_user_route_duplicate_email(test_client):
+    """Garante que POST /users/ retorna 400 ao tentar cadastrar email duplicado."""
+    payload = {"username": "novo_user", "email": "murilo@example.com"}
+    response = test_client.post("/users/", json=payload)
+    assert response.status_code in (400, 409)
+    data = response.get_json()
+    assert "error" in data

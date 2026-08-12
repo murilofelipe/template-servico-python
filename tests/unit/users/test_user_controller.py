@@ -1,4 +1,7 @@
 # tests/unit/users/test_user_controller.py
+import pytest
+from sqlalchemy.exc import IntegrityError
+
 from users import user_controller
 from users.user_schemas import UserInput
 
@@ -34,3 +37,29 @@ def test_create_user_success():
     fetched = user_controller.get_user_by_id(user.id)
     assert fetched is not None
     assert fetched.username == "novo_usuario"
+
+
+def test_create_user_duplicate_username_raises_integrity_error():
+    """Garante que tentar criar usuário com username existente lança
+    IntegrityError e faz rollback.
+    """
+    user_input = UserInput(username="murilo", email="diferente@example.com")
+    with pytest.raises(IntegrityError):
+        user_controller.create_user(user_input)
+
+    # Verifica que a sessão permanece operacional após o rollback
+    users = user_controller.get_all_users()
+    assert len(users) == 2
+
+
+def test_create_user_duplicate_email_raises_integrity_error():
+    """Garante que tentar criar usuário com email existente lança
+    IntegrityError e faz rollback.
+    """
+    user_input = UserInput(username="diferente", email="murilo@example.com")
+    with pytest.raises(IntegrityError):
+        user_controller.create_user(user_input)
+
+    # Verifica que a sessão permanece operacional após o rollback
+    users = user_controller.get_all_users()
+    assert len(users) == 2

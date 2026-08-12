@@ -10,7 +10,9 @@ from users.user_models import UserModel
 
 @pytest.fixture(scope="function", autouse=True)
 def app_context():
-    """Cria a aplicação Flask, configura banco em memória, semeia dados e limpa ao final."""
+    """Cria a aplicação Flask, configura banco em memória,
+    semeia dados e limpa ao final.
+    """
     flask_app = create_app()
     flask_app.config["TESTING"] = True
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
