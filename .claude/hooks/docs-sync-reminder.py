@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 
-DOC_PREFIXES = ("docs/", ".junie/")
+DOC_PREFIXES = ("docs/", ".claude/")
 DOC_FILES = ("README.md", "Makefile")
 CODE_PREFIXES = ("src/", "tests/")
 
