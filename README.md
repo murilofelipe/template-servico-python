@@ -14,7 +14,7 @@ Este é o template padrão (Golden Path) para a criação de novos microsserviç
 * **Banco de Dados:** Contêiner Postgres pronto para uso.
 * **Framework Web:** Flask com organização por Blueprints.
 * **Servidor WSGI:** Gunicorn como servidor de produção robusto.
-* **Qualidade de Código Automatizada:** Black, Flake8 e Mypy.
+* **Qualidade de Código Automatizada:** Ruff (lint + formatação), Mypy, cobertura (`pytest-cov`) e testes de mutação (`mutmut`).
 * **Testes:** Estrutura de testes pronta com `pytest`.
 * **Containerização:** `Dockerfile` otimizado com build multi-stage.
 * **Automação:** `Makefile` com atalhos para todas as tarefas comuns.
@@ -68,8 +68,8 @@ O `Makefile` é o painel de controle do projeto. Execute `make` ou `make help` p
 | Comando         | Descrição |
 |-----------------|-----------|
 | `make test`     | 🧪 Executa todos os testes automatizados com `pytest`. |
-| `make lint`     | 🔍 Roda checagens de qualidade de código com Flake8 e Mypy. |
-| `make format`   | 🎨 Formata o código com Black. |
+| `make lint`     | 🔍 Roda checagens de qualidade de código com Ruff e Mypy. |
+| `make format`   | 🎨 Formata o código com Ruff. |
 | `make run-dev`  | ▶️ Inicia o servidor manualmente com hot reload (opcional no Dev Container). |
 
 ### 🐳 Comandos de Ambiente (fora do Dev Container)
@@ -175,8 +175,7 @@ A estrutura de pastas foi pensada para ser escalável e organizada:
 .
 ├── .devcontainer/ # Configuração do Ambiente de Desenvolvimento em Contêiner
 ├── .github/      # Workflows do GitHub Actions (CI/CD)
-├── .vscode/      # Tarefas e configurações do VSCode (Debug, Tasks)
-├── deploy/       # (Futuro) Manifestos de deploy
+├── deploy/k8s/   # Manifestos Kubernetes (deployment, service, ingress, configmap)
 ├── docs/         # Documentação (ADRs, OpenAPI)
 ├── src/          # Código-fonte da aplicação
 ├── tests/        # Testes unitários e de integração
@@ -217,9 +216,9 @@ Você pode se conectar ao banco de dados Postgres que está rodando no contêine
 
 ## 📋 Backlog de Melhorias
 
-Para modernizar as tecnologias deste template e torná-lo ainda mais completo para novos projetos, foi elaborado um plano de melhorias estruturado em formato de backlog no arquivo [BACKLOG.md](file:///home/work/Documentos/Github/template-servico-python/BACKLOG.md). O planejamento cobre:
+Para modernizar as tecnologias deste template e torná-lo ainda mais completo para novos projetos, foi elaborado um plano de melhorias estruturado em formato de backlog no arquivo [BACKLOG.md](BACKLOG.md). O planejamento cobre:
 
-* **Épico 1: Modernização da Stack de Desenvolvimento e Qualidade** (Unificação do linter/formatador com Ruff, upgrade do Flask para 3.x e Pydantic para v2).
+* **Épico 1: Modernização da Stack de Desenvolvimento e Qualidade** (Ruff, Flask 3.x e Pydantic v2 — já adotados; ver `BACKLOG.md` para o que resta).
 * **Épico 2: Integração de Banco de Dados Real no Template** (Substituição do mock na rota de usuários por integração com PostgreSQL usando SQLAlchemy e migrações Flask-Migrate).
 * **Épico 3: Documentação de API Dinâmica e Configurações** (Geração automática de documentação Swagger com APIFlask/Flask-Smorest, configurações via Pydantic Settings e Health Check estendido).
 

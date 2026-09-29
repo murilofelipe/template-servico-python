@@ -15,7 +15,7 @@ This is the standard Golden Path template for creating new Python microservices 
 * **Database:** Ready-to-use Postgres container.
 * **Web Framework:** Flask with a Blueprint-based organization.
 * **WSGI Server:** Gunicorn as a robust production server.
-* **Automated Code Quality:** Black, Flake8, and Mypy.
+* **Automated Code Quality:** Ruff (lint + formatting), Mypy, coverage (`pytest-cov`) and mutation testing (`mutmut`).
 * **Testing:** Ready-to-use testing structure with `pytest`.
 * **Containerization:** Optimized multi-stage `Dockerfile`.
 * **Automation:** `Makefile` with shortcuts for all common tasks.
@@ -69,8 +69,8 @@ The `Makefile` is the project's control panel. Run `make` or `make help` to see 
 | Command         | Description |
 |-----------------|-----------|
 | `make test`     | 🧪 Runs all automated tests with `pytest`. |
-| `make lint`     | 🔍 Runs code quality checks with Flake8 and Mypy. |
-| `make format`   | 🎨 Formats the code with Black. |
+| `make lint`     | 🔍 Runs code quality checks with Ruff and Mypy. |
+| `make format`   | 🎨 Formats the code with Ruff. |
 | `make run-dev`  | ▶️ Starts the server manually with hot reload (optional in the Dev Container). |
 
 ### 🐳 Environment Commands (outside the Dev Container)
@@ -175,8 +175,7 @@ The folder structure is designed to be scalable and organized:
 .
 ├── .devcontainer/ # Dev Container configuration
 ├── .github/      # GitHub Actions Workflows (CI/CD)
-├── .vscode/      # VSCode tasks and settings (Debug, Tasks)
-├── deploy/       # (Future) Deployment manifests
+├── deploy/k8s/   # Kubernetes manifests (deployment, service, ingress, configmap)
 ├── docs/         # Documentation (ADRs, OpenAPI)
 ├── src/          # Application source code
 ├── tests/        # Unit and integration tests
@@ -214,6 +213,14 @@ You can connect to the Postgres database running in the `db` container using you
 1.  Navigate to the main page of this repository on GitHub.
 2.  Click the green **"Use this template"** button and select "Create a new repository".
 3.  Name your new microservice and follow the "Getting Started" guide above.
+
+## 📋 Improvement Backlog
+
+A structured improvement plan lives in [BACKLOG.md](BACKLOG.md). It covers:
+
+* **Epic 1: Development stack and quality modernization** (Ruff, Flask 3.x and Pydantic v2 — already adopted; see `BACKLOG.md` for what remains).
+* **Epic 2: Real database integration** (replace the users-route mock with PostgreSQL via SQLAlchemy and Flask-Migrate migrations).
+* **Epic 3: Dynamic API docs and configuration** (automatic Swagger docs with APIFlask/Flask-Smorest, configuration via Pydantic Settings and an extended health check).
 
 ## 🧪 Mandatory Tests
 
