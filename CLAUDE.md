@@ -9,8 +9,8 @@ regras — comece por ele. Quem alterar arquitetura deve atualizar o snapshot.
 
 ## Leia antes de tarefas que toquem no assunto
 
-1. `.junie/PROJECT_CONTEXT.md` — stack, convencoes, status atual
-2. `.junie/LEARNINGS.md` — erros recorrentes e regras aprendidas
+1. `.claude/PROJECT_CONTEXT.md` — stack, convencoes, status atual
+2. `.claude/LEARNINGS.md` — erros recorrentes e regras aprendidas
 3. `BACKLOG.md` — backlog e sprints planejados
 4. `AGENTS.md` — regras e contexto genérico para múltiplos agentes
 
@@ -26,4 +26,4 @@ regras — comece por ele. Quem alterar arquitetura deve atualizar o snapshot.
 
 ## Ao final de uma sessao que mudou arquitetura ou aprendizado
 
-Ofereca atualizar `.junie/PROJECT_CONTEXT.md` e `.junie/LEARNINGS.md`.
+Ofereca atualizar `.claude/PROJECT_CONTEXT.md` e `.claude/LEARNINGS.md`.

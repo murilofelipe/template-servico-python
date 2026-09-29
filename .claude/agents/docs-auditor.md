@@ -12,7 +12,7 @@ Voce **nao** edita nada — aponta divergencias.
 
 1. **Makefile <-> realidade.** Todo target documentado existe?
 2. **README <-> setup real.** Passo-a-passo de instalacao bate com dependencias reais?
-3. **`.junie/PROJECT_CONTEXT.md` / `.junie/LEARNINGS.md`.** Ainda verdadeiros?
+3. **`.claude/PROJECT_CONTEXT.md` / `.claude/LEARNINGS.md`.** Ainda verdadeiros?
 
 ## Saida
 
